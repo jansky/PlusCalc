@@ -1,0 +1,14 @@
+To install the PlusCalc library and interpreter run the following commands:
+
+$ make
+$ sudo make install
+
+To remove object files as well as built libraries and programs, run:
+
+$ make clean
+
+To uninstall the PlusCalc library and interpreter, run:
+
+$ sudo make uninstall
+
+During the installation process, the makefile copies libpluscalc.a to /usr/lib, pluscalc.h to /usr/include and pluscalcint to /usr/bin. Change this as needed.

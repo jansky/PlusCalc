@@ -1,0 +1,91 @@
+PlusCalc is a library and interpreter written in C++ to do infix notation mathematics with the correct order of operations.
+
+The library is licensed under the LGPL v3 and the interpreter is licensed under the GPL v3.
+
+The library is designed to be simple to use. After installing PlusCalc on your computer (follow the instructions contained in the file 'INSTALL'), any C++ code can use the library by including pluscalc.h and calling the function pc_evaluate_math_expression, which returns a long double, as below:
+
+#include <iostream>
+#include <pluscalc.h>
+
+int main(void)
+{
+	std::string expr = "3+4*5";
+	long double result = pc_evaluate_math_expression(expr);
+	std::cout << result << std::endl;
+	return 0;
+}
+
+After compiling this program with the -lpluscalc flag, you should get the output '23'.
+
+The PlusCalc interpreter is designed to emulate a fully functional desktop calculator. After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
+
+PlusCalc Interpreter
+Copyright (c) 2015 Ian Duncan
+This is free software with ABSOLUTELY NO WARRANTY.
+Enter 'license' for more information.
+Enter 'quit' to exit and 'clear' to clear the history file (~/.pluscalcint_history).
+
+> 
+
+Enter mathematical expressions at the prompt '>' such as 3^(2*4) and press enter to evaluate them. The interpreter contains the macro 'ans' which is expanded before evaluation to the result of the previous calculation:
+
+> 3^(2*4)
+6561
+> ans+3
+6564
+> 
+
+The PlusCalc interpreter makes use of the GNU readline library. All expressions that are entered are stored in a history file located at (~/.pluscalcint_history). When you are running the interpreter you can page through the history using the arrow keys as in any other program that uses the readline library.
+
+To clear the history file enter 'clear'. To quit enter 'quit'. To view licensing and warranty information enter 'license'.
+
+The PlusCalcInterpreter can also be run in non-interactive mode, in which it evaluates an expression passed as a command line argument. The interpreter concatenates all arguments into a single expression before evaluating, so spaces may be used:
+
+$ pluscalcint 2+3
+5
+$ pluscalcint 2 + 3 * 7
+23
+$ pluscalcint "(3+4)*(1+2)"
+21
+
+Expressions evaluated in non-interactive mode are not added to the history file.
+
+PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln
+PlusCalc supports nested parentheses, such as in (3*(7+8*(92/2)))
+PlusCalc defines the following constants: pi e
+
+Some of PlusCalc's operations are explained below:
+
+^ - exponent
+	Example: 3^2 = 9
+
+% - modulo
+	Example: 3%2 = 1
+
+sqrt - square root
+	Example: sqrt 4 = 2
+
+root - any root
+	Example: 3 root 27 = 3
+
+abs - absolute value
+	Example: abs -90 = 90
+	
+log - base 10 log
+	Example: log 1000 = 3
+
+logb - log of any base
+	Example: logb 6 36 = 2
+
+ln - natural log
+	Example: ln e = 1
+	
+Note that PlusCalc does not support taking even roots of negative numbers (e.g. sqrt -4 or 4 root -256)
+	
+
+
+
+
+
+
+
