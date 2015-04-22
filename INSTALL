@@ -3,6 +3,8 @@ To install the PlusCalc library and interpreter run the following commands:
 $ make
 $ sudo make install
 
+NOTE: In order to build the interpreter you need the GNU readline library.
+
 To remove object files as well as built libraries and programs, run:
 
 $ make clean
