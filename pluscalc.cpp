@@ -127,6 +127,8 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 
 		if(!foundoperation)
 			throw operationerror;
+			
+		
 
 		//Parentheses
 		for(int i = 0; i<wcopy.size(); i++)
@@ -175,7 +177,28 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 			}
 		}
 
+		//Negatives
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == minus && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					if(!pc_is_value_numeric(wcopy[i - 1]))
+					{
+						gofurther = false;
+						newvalue = pc_create_token(number,0 - wcopy[i + 1].value);
+						//blacklist.push_back(i - 1);
+						blacklist.push_back(i + 1);
+						blacklist.push_back(i);
+						insertat = i;
+					}
 
+				}
+			}
+		}
 
 
 		//Square Root and Absolute Value

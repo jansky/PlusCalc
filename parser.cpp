@@ -33,7 +33,7 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 	while(i < s.length())
 	{
 		//std::cout << i << std::endl;
-		if(isdigit(s[i]) || s[i] == '.' || s[i] == '-')
+		if(isdigit(s[i]) || s[i] == '.')
 		{
 			on_number = true;
 
