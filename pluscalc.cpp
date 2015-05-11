@@ -16,6 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "pluscalc.h"
+#include <iostream>
 
 
 PCOperand pc_get_operand_from_string(std::string tocheck)
@@ -104,6 +105,19 @@ std::vector<std::string> PCStringSplit(const std::string &source, const char *de
     }
 
     return results;
+}
+
+long long pc_factorial(long long n)
+{
+  long long value = 1;
+
+    for(long long i = 2; i <= n; i++)
+    {
+    
+        value = value * i;
+    }
+
+    return value;
 }
 
 PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
@@ -195,6 +209,27 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 						blacklist.push_back(i);
 						insertat = i;
 					}
+
+				}
+			}
+		}
+
+		//Factorial
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == factorial && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i - 1]))
+					throw syntaxerror;
+				else
+				{
+					if(wcopy[i - 1].value < 0)
+						throw domainerror;
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_factorial((long long)wcopy[i - 1].value));
+					blacklist.push_back(i - 1);
+					blacklist.push_back(i);
+					insertat = i;
 
 				}
 			}
@@ -466,7 +501,7 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 
 
 
-PCCalcToken pc_create_token(PCTokenType type, double value)
+PCCalcToken pc_create_token(PCTokenType type, long double value)
 {
 	PCCalcToken t;
 
@@ -474,6 +509,37 @@ PCCalcToken pc_create_token(PCTokenType type, double value)
 	t.value = value;
 
 	return t;
+}
+
+PCVariable pc_create_variable(long double value, char name)
+{
+	PCVariable var;
+	std::vector<PCCalcToken> tokens;
+
+	tokens.push_back(pc_create_token(number, value));
+
+	var.tokens = tokens;
+	var.name = name;
+
+	return var;
+}
+
+PCVariable pc_create_variable(std::vector<PCCalcToken> value, char name)
+{
+	PCVariable var;
+	
+
+	var.tokens = value;
+	var.name = name;
+
+	//Check that variable definition is not endlessly recursive
+	for(int i = 0; i < value.size(); i++)
+	{
+		if(value[i].type == variable && value[i].value == (long double)name)
+			throw variableerror;
+	}
+
+	return var;
 }
 
 long double pc_evaluate_math_expression(std::string expr)
@@ -501,7 +567,122 @@ long double pc_evaluate_math_expression(std::string expr)
 	*/
 
 	std::vector<PCCalcToken> tokens;
-	tokens = pc_parse_string(expr);
+	tokens = pc_parse_string(expr, false);
+
+	PCCalcToken last = pc_iterate_tokens(tokens);
+
+	if(last.type != number)
+		throw lasttokenerror;
+
+	return last.value;
+
+
+
+
+}
+
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr)
+{
+	PCCalcToken last = pc_iterate_tokens(expr);
+
+	if(last.type != number)
+		throw lasttokenerror;
+
+	return last.value;
+}
+
+int pc_get_variable_by_name(std::vector<PCVariable> vars, char name)
+{
+	for(int i = 0; i < vars.size(); i++)
+	{
+		if(vars[i].name == name)
+		{
+			//5std::cout << vars[i].name << std::endl;
+			return i;
+		}
+	}
+
+	throw variableerror;
+
+	return 0;
+}
+
+std::vector<PCCalcToken> pc_variable_substitute(std::vector<PCCalcToken> tok, std::vector<PCVariable> vars)
+{
+	std::vector<PCCalcToken> tokens = tok;
+	bool foundvar = false;
+
+	for(int i = 0; i < tokens.size(); i++)
+	{
+			//std::cout << tokens[i].value << std::endl;
+
+			if(tokens[i].type == variable)
+			{
+				int varid = pc_get_variable_by_name(vars, (char)tokens[i].value);
+
+				//std::cout << (vars[varid]).tokens[0].value << std::endl;
+
+				//std::cout << tokens[i + 1].value << std::endl;
+
+				tokens.erase(tokens.begin()+i);
+
+				tokens.insert(tokens.begin()+i, vars[varid].tokens.begin(), vars[varid].tokens.end());
+
+				//std::cout << tokens[i].value << std::endl;
+
+				//std::cout << tokens[i + 1].value << std::endl;
+
+				foundvar = true;
+				goto outofloop;
+			}
+	}
+
+	outofloop:
+
+	if(foundvar)
+		return pc_variable_substitute(tokens, vars);
+	else
+		return tokens;
+}
+
+long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable> vars)
+{
+	
+
+	std::vector<PCCalcToken> tokens;
+	tokens = pc_parse_string(expr, true);
+	//Not really but we need this to be true for the sake of the while loop
+	bool foundvar = true;
+
+	//Perform the substitution
+	tokens = pc_variable_substitute(tokens, vars);
+	
+
+
+	PCCalcToken last = pc_iterate_tokens(tokens);
+
+	if(last.type != number)
+		throw lasttokenerror;
+
+	return last.value;
+
+
+
+
+}
+
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vector<PCVariable> vars)
+{
+	
+
+	std::vector<PCCalcToken> tokens = expr;
+	//Not really but we need this to be true for the sake of the while loop
+	bool foundvar = true;
+
+	//Perform the substitution
+	tokens = pc_variable_substitute(tokens, vars);
+	
+
 
 	PCCalcToken last = pc_iterate_tokens(tokens);
 

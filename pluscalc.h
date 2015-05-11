@@ -25,15 +25,22 @@
 #define PC_E 2.71828182845904523536
 #define PC_PI  3.141592653589793238462643383279502884
 
-enum PCTokenType{operand,number};
-enum PCOperand{invalid,plus,minus,mul,divide,exponent,squareroot,root,absolutevalue,rightper,leftper,logarithm, naturallogarithm, baselogarithm,modulo};
-enum PCException{syntaxerror,lasttokenerror,domainerror,operationerror};
+enum PCTokenType{operand,number,variable};
+enum PCOperand{invalid,plus,minus,mul,divide,exponent,squareroot,root,absolutevalue,rightper,leftper,logarithm, naturallogarithm, baselogarithm,modulo,factorial};
+enum PCException{syntaxerror,lasttokenerror,domainerror,operationerror,variableerror};
 
 typedef struct PCCalcToken
 {
 	PCTokenType type;
 	long double value;
 } PCCalcToken;
+
+typedef struct PCVariable
+{
+    char name;
+    std::vector<PCCalcToken> tokens;
+    
+} PCVariable;
 
 bool pc_is_value_numeric(std::string tocheck);
 bool pc_is_value_numeric(PCCalcToken tocheck);
@@ -46,10 +53,20 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens);
 
 std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter = " ", bool keepEmpty = false);
 
-PCCalcToken pc_create_token(PCTokenType type, double value);
+PCCalcToken pc_create_token(PCTokenType type, long double value);
+
+PCVariable pc_create_variable(long double value, char name);
+PCVariable pc_create_variable(std::vector<PCCalcToken> value, char name);
+std::vector<PCCalcToken> pc_variable_substitute(std::vector<PCCalcToken> tok, std::vector<PCVariable> vars);
+int pc_get_variable_by_name(std::vector<PCVariable> vars, char name);
 
 long double pc_evaluate_math_expression(std::string expr);
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr);
+long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable> vars);
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vector<PCVariable> vars);
 
-std::vector<PCCalcToken> pc_parse_string(std::string s);
+std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled=true);
+
+long long pc_factorial(long long n);
 
 

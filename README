@@ -17,7 +17,31 @@ int main(void)
 
 After compiling this program with the -lpluscalc flag, you should get the output '23'.
 
-The PlusCalc interpreter is designed to emulate a fully functional desktop calculator. After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
+The PlusCalc library also supports defining and using variables in your expressions:
+
+#include <iostream>
+#include <pluscalc.h>
+
+int main(void)
+{
+	std::string expr = "x+3";
+	//Variables list
+	std::vector<PCVariable> variables;
+
+	//Create variable 'y' with value of 10
+	variables.push_back(pc_create_variable(10, 'y'));
+
+	//Create variable 'x' with value of '2^5'.
+	variables.push_back(pc_create_variable(pc_parse_string("2^5", true), 'x'));
+
+	long double result = pc_evaluate_math_expression(expr, variables);
+	std::cout << result << std::endl;
+	return 0;
+}
+
+The above will output '35'.
+
+The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for functions and variables. After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
 
 PlusCalc Interpreter
 Copyright (c) 2015 Ian Duncan
@@ -50,7 +74,7 @@ $ pluscalcint "(3+4)*(1+2)"
 
 Expressions evaluated in non-interactive mode are not added to the history file.
 
-PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln
+PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln !
 PlusCalc supports nested parentheses, such as in (3*(7+8*(92/2)))
 PlusCalc defines the following constants: pi e
 
@@ -79,8 +103,50 @@ logb - log of any base
 
 ln - natural log
 	Example: ln e = 1
+
+! - factorial
+	Example: 4! = 24
+	Note: PlusCalc does not handle factorials of numbers above 20 correctly (they're too large), as well as decimals and negative numbers
 	
 Note that PlusCalc does not support taking even roots of negative numbers (e.g. sqrt -4 or 4 root -256)
+
+The PlusCalc interpreter also includes the variable support of the PlusCalc library, as well as functions (not a part of the library).
+
+Variables can be any character that is not a defined operation or constant (e.g. e, +, *).
+
+Examples of valid variable names: a,b,c,$
+Examples of invalid variables names (don't use these): max,+,**
+
+Defining and using variables is simple:
+
+> set a 3
+> a+3
+6
+> set b 2^5
+> a+b
+35
+
+The PlusCalc library, and by extension, the interpreter, evaluates the value of variables at the time of expression evaluation. This means that values of variables can change dynamically:
+
+> set a 3
+> set b a+3
+> b
+6
+> set a 4
+> b
+7
+
+Functions can have multiple arguments. Argument names follow the same rules as variable names. If there is a conflict (e.g. you define variable x and have a function with an argument called x), you cannot access the defined variable from within the function.
+
+Defining and using functions is simple:
+
+> set x 5
+> func test x,y,z;x+y+z
+> call test 1,2,3
+6
+> x
+5
+
 	
 
 

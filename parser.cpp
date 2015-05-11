@@ -20,7 +20,7 @@
 #include <ctype.h>
 #include <iostream>
 
-std::vector<PCCalcToken> pc_parse_string(std::string s)
+std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled)
 {
 	std::vector<PCCalcToken> tokens;
 
@@ -86,6 +86,11 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 				{
 					tokens.push_back(pc_create_token(operand, modulo));
 				}
+				else if(s[i] == '!')
+				{
+					
+					tokens.push_back(pc_create_token(operand, factorial));
+				}
 				else if(s[i] == 'e')
 				{
 					tokens.push_back(pc_create_token(number, PC_E));
@@ -98,7 +103,19 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 						i+=3;
 					}
 					else
-						throw syntaxerror;
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
 				}
 				else if(s[i] == 'r')
 				{
@@ -108,7 +125,19 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 						i+=3;
 					}
 					else
-						throw syntaxerror;
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
 					
 				}
 				else if(s[i] == 'a')
@@ -119,7 +148,19 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 						i+=3;
 					}
 					else
-						throw syntaxerror;
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
 					
 				}
 
@@ -141,7 +182,19 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 						i+=1;
 					}
 					else
-						throw syntaxerror;
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
 					
 				}
 				else if(s[i] == 'p')
@@ -152,13 +205,36 @@ std::vector<PCCalcToken> pc_parse_string(std::string s)
 						i+=1;
 					}
 					else
-						throw syntaxerror;
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
 				}
 					
 				else
 				{
 					//std::cout << "~~" << std::endl;
-					throw syntaxerror;
+
+					if(varsenabled)
+					{
+						//std::cout << s[i] << std::endl;
+						//Variables are enabled, treat char as a variable
+						tokens.push_back(pc_create_token(variable, (double)s[i]));
+					}
+					else
+					{
+						//No variables, unrecognized character
+						throw syntaxerror;
+					}
 				}
 			}
 
