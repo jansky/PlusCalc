@@ -67,6 +67,8 @@ long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vect
 
 std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled=true);
 
+std::string pc_tokens_to_string(std::vector<PCCalcToken> tokens);
+
 long long pc_factorial(long long n);
 
 

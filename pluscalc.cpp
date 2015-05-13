@@ -17,6 +17,7 @@
 */
 #include "pluscalc.h"
 #include <iostream>
+#include <sstream>
 
 
 PCOperand pc_get_operand_from_string(std::string tocheck)
@@ -691,8 +692,66 @@ long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vect
 
 	return last.value;
 
+}
 
+std::string pc_tokens_to_string(std::vector<PCCalcToken> tokens)
+{
+	std::string result = "";
 
+	for(int i = 0; i < tokens.size(); i++)
+	{
+		if(tokens[i].type == operand)
+		{
+			
 
+			if(tokens[i].value == plus)
+				result += "+";
+			else if(tokens[i].value == minus)
+				result += "-";
+			else if(tokens[i].value == mul)
+				result += "*";
+			else if(tokens[i].value == divide)
+				result += "/";
+			else if(tokens[i].value == exponent)
+				result += "^";
+			else if(tokens[i].value == squareroot)
+				result += "sqrt ";
+			else if(tokens[i].value == root)
+				result += " root ";
+			else if(tokens[i].value == absolutevalue)
+				result += "abs ";
+			else if(tokens[i].value == leftper)
+				result += "(";
+			else if(tokens[i].value == rightper)
+				result += ")";
+			else if(tokens[i].value == logarithm)
+				result += "log ";
+			else if(tokens[i].value == naturallogarithm)
+				result += "ln ";
+			else if(tokens[i].value == baselogarithm)
+				result += "logb ";
+			else if(tokens[i].value == modulo)
+				result += "%";
+			else if(tokens[i].value == factorial)
+				result += "!";
+			else
+				throw syntaxerror;
+		}
+		else if(tokens[i].type == variable)
+		{
+			result += char(tokens[i].value);
+		}
+		else if(tokens[i].type == number)
+		{
+			std::stringstream ss;
+			ss << tokens[i].value;
+
+			result += ss.str();
+		}
+		else
+			throw syntaxerror;
+	}
+
+	return result;
 }
 

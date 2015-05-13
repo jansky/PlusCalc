@@ -147,6 +147,18 @@ Defining and using functions is simple:
 > x
 5
 
+Defined variables and functions can be saved to a file by using the save command to allow them to be used in later sessions.
+
+> save filename.pc
+
+To load them, use the load command:
+
+> load filename.pc
+
+These filenames can also be specified on the command line by using the -l switch:
+
+$ pluscalc -l filename1.pc filename2.pc ...
+
 	
 
 
