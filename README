@@ -41,7 +41,7 @@ int main(void)
 
 The above will output '35'.
 
-The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for functions and variables. After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
+The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for probability functions as well as user-defined functions and variables. After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
 
 PlusCalc Interpreter
 Copyright (c) 2015 Ian Duncan
@@ -74,7 +74,7 @@ $ pluscalcint "(3+4)*(1+2)"
 
 Expressions evaluated in non-interactive mode are not added to the history file.
 
-PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln !
+PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln ! nPr nCr
 PlusCalc supports nested parentheses, such as in (3*(7+8*(92/2)))
 PlusCalc defines the following constants: pi e
 
@@ -107,6 +107,14 @@ ln - natural log
 ! - factorial
 	Example: 4! = 24
 	Note: PlusCalc does not handle factorials of numbers above 20 correctly (they're too large), as well as decimals and negative numbers
+
+nPr - Permutation formula
+	Example: 10nPr3 = 720
+	Note: The name is case sensitive. 'npr' and 'NPR' are not valid.
+
+nCr - Combination formula
+	Example: 10nCr3 = 120
+	Note: The name is case sensitive. 'ncr' and 'NCR' are not valid.
 	
 Note that PlusCalc does not support taking even roots of negative numbers (e.g. sqrt -4 or 4 root -256)
 
@@ -157,7 +165,7 @@ To load them, use the load command:
 
 These filenames can also be specified on the command line by using the -l switch:
 
-$ pluscalc -l filename1.pc filename2.pc ...
+$ pluscalcint -l filename1.pc filename2.pc ...
 
 	
 

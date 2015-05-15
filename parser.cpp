@@ -145,7 +145,7 @@ std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled)
 					if(s.length() > i + 2 && s[i + 1] == 'b' && s[i + 2] == 's')
 					{
 						tokens.push_back(pc_create_token(operand, absolutevalue));
-						i+=3;
+						i+=2;
 					}
 					else
 					{
@@ -163,7 +163,34 @@ std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled)
 					}
 					
 				}
-
+				else if(s[i] == 'n')
+				{
+					if(s.length() > i + 2 && s[i + 1] == 'P' && s[i + 2] == 'r')
+					{
+						tokens.push_back(pc_create_token(operand, npr));
+						i+=2;
+					}
+					else if(s.length() > i + 2 && s[i + 1] == 'C' && s[i + 2] == 'r')
+					{
+						tokens.push_back(pc_create_token(operand, ncr));
+						i+=2;
+					}
+					else
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
+					
+				}
 				else if(s[i] == 'l')
 				{
 					if(s.length() > i + 3 && s[i + 1] == 'o' && s[i + 2] == 'g' && s[i+3] == 'b')

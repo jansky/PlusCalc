@@ -108,11 +108,24 @@ std::vector<std::string> PCStringSplit(const std::string &source, const char *de
     return results;
 }
 
-long long pc_factorial(long long n)
+long double pc_factorial(long long n)
 {
-  long long value = 1;
+  long double value = 1;
 
     for(long long i = 2; i <= n; i++)
+    {
+    
+        value = value * i;
+    }
+
+    return value;
+}
+
+long double pc_factorial_lim(long long n, long long l)
+{
+	long double value = n; 
+
+    for(long long i = n-1; i > l; i--)
     {
     
         value = value * i;
@@ -210,6 +223,51 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 						blacklist.push_back(i);
 						insertat = i;
 					}
+
+				}
+			}
+		}
+
+		//Probability Functions
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == npr && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i - 1]) || !pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					if(wcopy[i-1].value < (wcopy[i-1].value - wcopy[i+1].value))
+						throw domainerror;
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_factorial_lim((long long)wcopy[i-1].value, (long long)wcopy[i-1].value - wcopy[i+1].value));
+					blacklist.push_back(i - 1);
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == ncr && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i - 1]) || !pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					if(wcopy[i-1].value < (wcopy[i-1].value - wcopy[i+1].value))
+						throw domainerror;
+					gofurther = false;
+					long double step1 = pc_factorial_lim((long long)wcopy[i-1].value, (long long)(wcopy[i-1].value - wcopy[i+1].value));
+					newvalue = pc_create_token(number, step1/pc_factorial((long long)wcopy[i+1].value));
+					blacklist.push_back(i - 1);
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
 
 				}
 			}
@@ -338,6 +396,8 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 			}
 		}
 
+
+		
 
 		//Root and Exponent
 		for(int i = 0; i<wcopy.size(); i++)

@@ -26,7 +26,7 @@
 #define PC_PI  3.141592653589793238462643383279502884
 
 enum PCTokenType{operand,number,variable};
-enum PCOperand{invalid,plus,minus,mul,divide,exponent,squareroot,root,absolutevalue,rightper,leftper,logarithm, naturallogarithm, baselogarithm,modulo,factorial};
+enum PCOperand{invalid,plus,minus,mul,divide,exponent,squareroot,root,absolutevalue,rightper,leftper,logarithm, naturallogarithm, baselogarithm,modulo,factorial,npr,ncr};
 enum PCException{syntaxerror,lasttokenerror,domainerror,operationerror,variableerror};
 
 typedef struct PCCalcToken
@@ -69,6 +69,7 @@ std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled=true);
 
 std::string pc_tokens_to_string(std::vector<PCCalcToken> tokens);
 
-long long pc_factorial(long long n);
+long double pc_factorial(long long n);
+long double pc_factorial_lim(long long n, long long l);
 
 
