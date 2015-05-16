@@ -1,0 +1,9 @@
+#!/usr/bin/pluscalcint -e
+print Quadratic Equation Solver
+input a
+input b
+input c
+printr Zero 1: 
+((-1*b)+(sqrt(4*a*c)))/(2*a)
+printr Zero 2: 
+((-1*b)-(sqrt(4*a*c)))/(2*a)

@@ -49,7 +49,7 @@ int pci_get_function_id_by_name(std::string name);
 long double pci_evaluate_function(PCIFunction function, std::string args);
 
 bool pci_save_vars_funcs_to_file(std::string fname);
-long double pci_load_vars_funcs_from_file(std::string fname, long double ans);
+long double pci_load_vars_funcs_from_file(std::string fname, long double ans,bool exitonexception=false);
 
 
 
@@ -208,7 +208,7 @@ bool pci_save_vars_funcs_to_file(std::string fname)
 
 }
 
-long double pci_load_vars_funcs_from_file(std::string fname, long double ans)
+long double pci_load_vars_funcs_from_file(std::string fname, long double ans,bool exitonexception)
 {
 	std::ifstream save(fname);
 	long double newans = ans;
@@ -223,7 +223,7 @@ long double pci_load_vars_funcs_from_file(std::string fname, long double ans)
 			if(!line.empty() && line[0] != '#')
 			{
 				
-				newans = evaluateInput(line, newans, false);
+				newans = evaluateInput(line, newans, exitonexception);
 			}
 		}
 
@@ -231,6 +231,9 @@ long double pci_load_vars_funcs_from_file(std::string fname, long double ans)
 	else
 	{
 		std::cout << "Error: Could not open file." << std::endl;
+
+		if(exitonexception)
+			exit(9);
 		
 	}
 
@@ -246,7 +249,7 @@ int main(int argc, char **argv)
 	historypath = getenv("HOME");
 	historypath += "/.pluscalcint_history";
 	
-	if(argc > 1 && std::string(argv[1]) != "-l")
+	if(argc > 1 && std::string(argv[1]) != "-l" && std::string(argv[1]) != "-e")
 		evaluateCmdInput(argc, argv);
 	else
 	{
@@ -257,8 +260,19 @@ int main(int argc, char **argv)
 		
 		
 		long double ans = 0;
+
+		if(argc > 2 && std::string(argv[1]) == "-e")
+		{
+			
+
+			evaluateInput("load " + std::string(argv[2]), ans, true);
+				
+			exit(0);
+
+
+		}
 	
-		std::cout << "PlusCalc Interpreter v1.99a" << std::endl << "Copyright (c) 2015 Ian Duncan" << std::endl << "This is free software with ABSOLUTELY NO WARRANTY.\nEnter 'license' for more information." <<  std::endl << "Enter 'quit' to exit and 'clear' to clear the history file (~/.pluscalcint_history)." << std::endl << std::endl;
+		std::cout << "PlusCalc Interpreter v1.99b" << std::endl << "Copyright (c) 2015 Ian Duncan" << std::endl << "This is free software with ABSOLUTELY NO WARRANTY.\nEnter 'license' for more information." <<  std::endl << "Enter 'quit' to exit and 'clear' to clear the history file (~/.pluscalcint_history)." << std::endl << std::endl;
 	
 		if(argc > 2 && std::string(argv[1]) == "-l")
 		{
@@ -273,6 +287,8 @@ int main(int argc, char **argv)
 
 
 		}
+
+		
 
 		while(1)
 		{
@@ -335,7 +351,7 @@ long double evaluateInput(std::string input, long double ans, bool exitonexcepti
 		else if(input == "license")
 		{
 		
-		    std::cout << "PlusCalc Interpreter v1.99a" << std::endl;
+		    std::cout << "PlusCalc Interpreter v1.99b" << std::endl;
     		std::cout << "Copyright (C) 2015 Ian Duncan" << std::endl << std::endl;
 
     		std::cout << "This program is free software: you can redistribute it and/or modify" << std::endl;
@@ -400,6 +416,70 @@ long double evaluateInput(std::string input, long double ans, bool exitonexcepti
 					variables.push_back(pc_create_variable(pc_parse_string(varraw, true), name));
 
 
+				}
+				//We need to get user input to define a variable
+				else if(inputvec[0] == "input" && inputvec.size() >= 2)
+				{
+					char name = (inputvec[1])[0];
+
+					//Remove variable entries with the same name
+					for(int i = 0; i < variables.size(); i++)
+					{
+						if(variables[i].name == name)
+						{
+							variables.erase(variables.begin()+i);
+							break;
+						}
+					}
+
+					std::string uinput;
+
+					if(inputvec.size() == 2)
+						std::cout << name << "? ";
+					else
+					{
+						//Build the prompt
+						std::string prompt = "";
+
+						for(int i = 2; i < inputvec.size(); i++)
+						{
+							prompt += inputvec[i] + " ";
+						}
+
+						std::cout << prompt;
+					}
+
+					std::cin >> uinput;
+
+					variables.push_back(pc_create_variable(pc_parse_string(uinput, true), name));
+
+
+				}
+				//We need to print a string and a newline
+				else if(inputvec[0] == "print" && inputvec.size() > 1)
+				{
+						//Build the string
+						std::string toprint = "";
+
+						for(int i = 1; i < inputvec.size(); i++)
+						{
+							toprint += inputvec[i] + " ";
+						}
+
+						std::cout << toprint << std::endl;
+				}
+				//We need to print a string without a newline
+				else if(inputvec[0] == "printr" && inputvec.size() > 1)
+				{
+						//Build the string
+						std::string toprint = "";
+
+						for(int i = 1; i < inputvec.size(); i++)
+						{
+							toprint += inputvec[i] + " ";
+						}
+
+						std::cout << toprint;
 				}
 				//We need to define a function
 				else if(inputvec[0] == "func" && inputvec.size () > 2)

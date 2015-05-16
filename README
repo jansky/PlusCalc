@@ -41,7 +41,7 @@ int main(void)
 
 The above will output '35'.
 
-The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for probability functions as well as user-defined functions and variables. After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
+The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for probability functions as well as user-defined functions and variables. The interpreter can also execute user-written scripts when run with the '-e' flag (see bottom for more details). After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
 
 PlusCalc Interpreter
 Copyright (c) 2015 Ian Duncan
@@ -166,6 +166,53 @@ To load them, use the load command:
 These filenames can also be specified on the command line by using the -l switch:
 
 $ pluscalcint -l filename1.pc filename2.pc ...
+
+Users can also write their own scripts to be executed by the PlusCalc interpreter using the -e flag:
+
+$ pluscalcint -e script.pc
+
+You can also use the following shebang:
+
+#!/usr/bin/pluscalcint -e
+
+The print, printr, and input commands, although usable in interactive mode, were designed for scripts. Scripts can contain any instruction that you could evaluate in interactive mode, including defining variables and functions. Comment lines are preceded by a '#'.
+
+Example:
+
+#!/usr/bin/pluscalcint -e
+print This is a PlusCalc script
+input a
+input b This is my custom prompt: 
+printr The result is: 
+a+b
+
+Result
+
+This is a PlusCalc script
+a? 5
+This is my custom prompt: 6
+The result is: 11
+
+You can look at the 'quadratic.pc' script as another example. It is designed to find the zeroes of quadratic functions.
+
+Details on print, printr, and input
+
+print - Prints a string and a newline
+	Example: print This is a test
+	Result: This is a test\n
+	(\n = newline)
+
+printr - Prints a string without a newline
+	Example: The result is: 
+	Result: The result is: 
+
+input - Allows a variable to be defined by user input
+	Example: input a
+	Result: a? 
+	Example: input a My custom prompt: 
+	Result: My custom prompt: 
+	NOTE: Any valid PlusCalc expression may be entered at the prompt
+
 
 	
 
