@@ -41,15 +41,18 @@ int main(void)
 
 The above will output '35'.
 
-The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for probability functions as well as user-defined functions and variables. The interpreter can also execute user-written scripts when run with the '-e' flag (see bottom for more details). After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
+The PlusCalc interpreter is designed to emulate a fully functional desktop calculator, as well as providing support for probability and trigonometric functions, as well as user-defined functions and variables. The interpreter can also execute user-written scripts when run with the '-e' flag (see bottom for more details). After installing PlusCalc, you can run 'pluscalcint' to start it. If you do not pass it any command line arguments, it will launch in interactive mode:
 
-PlusCalc Interpreter
+PlusCalc Interpreter v1.99c
 Copyright (c) 2015 Ian Duncan
 This is free software with ABSOLUTELY NO WARRANTY.
 Enter 'license' for more information.
 Enter 'quit' to exit and 'clear' to clear the history file (~/.pluscalcint_history).
 
+Trigonometry mode: degrees
+
 > 
+
 
 Enter mathematical expressions at the prompt '>' such as 3^(2*4) and press enter to evaluate them. The interpreter contains the macro 'ans' which is expanded before evaluation to the result of the previous calculation:
 
@@ -74,7 +77,9 @@ $ pluscalcint "(3+4)*(1+2)"
 
 Expressions evaluated in non-interactive mode are not added to the history file.
 
-PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln ! nPr nCr
+Expressions that you wish to be evaluated when the PlusCalc interpreter starts in both interactive and non-interactive mode can be added to the file ~/.pluscalcintrc, with one expression per line.
+
+PlusCalc supports the following operations: + - * / ^ % sqrt root abs log logb ln ! nPr nCr sin cos tan asin acos atan
 PlusCalc supports nested parentheses, such as in (3*(7+8*(92/2)))
 PlusCalc defines the following constants: pi e
 
@@ -115,8 +120,38 @@ nPr - Permutation formula
 nCr - Combination formula
 	Example: 10nCr3 = 120
 	Note: The name is case sensitive. 'ncr' and 'NCR' are not valid.
-	
-Note that PlusCalc does not support taking even roots of negative numbers (e.g. sqrt -4 or 4 root -256)
+
+sin - sine
+	Example: sin 90 = 1 (in degrees mode)
+
+cos - cosine
+	Example: cos 60 = 0.5 (in degrees mode)
+
+tan - tangent
+	Example: tan 45 = 1 (in degrees mode)
+
+asin - arcsine (inverse of sine)
+	Example: asin 1 = 90 (in degrees mode)
+
+acos - arccosine (inverse of cosine)
+	Example: acos 0.5 = 60 (in degrees mode)
+
+atan - arctangent (inverse of tangent)
+	Example: atan 1 = 45 (in degrees mode)
+
+Note that PlusCalc does not support taking even roots of negative numbers (e.g. sqrt -4 or 4 root -256).
+
+You can determine or view the unit of angle measure (trigonometric mode) used by trigonometric functions with the 'tmode' function. Just running 'tmode' will print the current trigonometric mode:
+
+> tmode
+Trigonometry mode: degrees
+
+Passing deg (degrees), rad (radians), grad (gradians), turn (turns), will set the trigonometric mode:
+
+> tmode grad
+Trigonometry mode: gradians
+> tan 50
+1.000000000000000222
 
 The PlusCalc interpreter also includes the variable support of the PlusCalc library, as well as functions (not a part of the library).
 
@@ -125,7 +160,7 @@ Variables can be any character that is not a defined operation or constant (e.g.
 Examples of valid variable names: a,b,c,$
 Examples of invalid variables names (don't use these): max,+,**
 
-Defining and using variables is simple:
+Defining and using variables is simple: 
 
 > set a 3
 > a+3

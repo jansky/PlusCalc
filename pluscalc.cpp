@@ -84,6 +84,117 @@ bool pc_i_is_in_blacklist(std::vector<int>& blacklist, int i)
 	return false;
 }
 
+double pc_trig_eval(PCTrigFunction ftype, double value, PCTrigMode tmode)
+{
+	double nvalue = value;
+	double result = 0;
+	bool convert_result = false;
+
+	switch(tmode)
+	{
+		case rad:
+		{
+			break;
+		}
+		case deg:
+		{
+			nvalue = value * (PC_PI/180);
+			break;
+		}
+		case grad:
+		{
+			nvalue = value * (PC_PI/200);
+			break;
+		}
+		case turn:
+		{
+			nvalue = value * (2*PC_PI);
+			break;
+		}
+		default:
+		{
+			throw syntaxerror;
+		}
+	}
+
+	switch(ftype)
+	{
+		case tfsine:
+		{
+			result = sin(nvalue);
+			break;
+		}
+		case tfcosine:
+		{
+			result = cos(nvalue);
+			break;
+		}
+		case tftangent:
+		{
+			if(nvalue == 0.7853981633974482789)
+				result = 1;
+			else
+				result = tan(nvalue);
+			break;
+		}
+		case tfarcsine:
+		{
+			result = asin(value);
+			convert_result = true;
+			break;
+		}
+		case tfarccosine:
+		{
+			result = acos(value);
+			convert_result = true;
+			break;
+		}
+		case tfarctangent:
+		{
+			result = atan(value);
+			convert_result = true;
+			break;
+		}
+		default:
+		{
+			throw syntaxerror;
+		}
+	}
+
+	if(convert_result)
+	{
+		switch(tmode)
+		{
+			case rad:
+			{
+				break;
+			}
+			case deg:
+			{
+				result = result * (180/PC_PI);
+				break;
+			}
+			case grad:
+			{
+				result = result * (200/PC_PI);
+				break;
+			}
+			case turn:
+			{
+				result = result / (2*PC_PI);
+				break;
+			}
+			default:
+			{
+				throw syntaxerror;
+			}
+		}
+	}
+
+	return result;
+	
+}
+
 std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter, bool keepEmpty)
 {
     std::vector<std::string> results;
@@ -134,7 +245,7 @@ long double pc_factorial_lim(long long n, long long l)
     return value;
 }
 
-PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
+PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens, PCTrigMode tmode)
 {
 	std::vector<PCCalcToken> wcopy = tokens;
 
@@ -227,6 +338,122 @@ PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens)
 				}
 			}
 		}
+
+		//Trig functions
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == sine && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_trig_eval(tfsine, wcopy[i+1].value, tmode));
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == cosine && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_trig_eval(tfcosine, wcopy[i+1].value, tmode));
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == tangent && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_trig_eval(tftangent, wcopy[i+1].value, tmode));
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == arcsine && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_trig_eval(tfarcsine, wcopy[i+1].value, tmode));
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == arccosine && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_trig_eval(tfarccosine, wcopy[i+1].value, tmode));
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
+		for(int i = 0; i<wcopy.size(); i++)
+		{
+			if(wcopy[i].type == operand && wcopy[i].value == arctangent && gofurther == true)
+			{
+				if(!pc_is_value_numeric(wcopy[i + 1]))
+					throw syntaxerror;
+				else
+				{
+					
+					gofurther = false;
+					newvalue = pc_create_token(number, pc_trig_eval(tfarctangent, wcopy[i+1].value, tmode));
+					blacklist.push_back(i + 1);
+					blacklist.push_back(i);
+					insertat = i;
+
+				}
+			}
+		}
+
 
 		//Probability Functions
 
@@ -603,7 +830,7 @@ PCVariable pc_create_variable(std::vector<PCCalcToken> value, char name)
 	return var;
 }
 
-long double pc_evaluate_math_expression(std::string expr)
+long double pc_evaluate_math_expression(std::string expr, PCTrigMode tmode)
 {
 	/*std::vector<std::string> stringtokens = PCStringSplit(expr);
 	std::vector<PCCalcToken> tokens;
@@ -630,7 +857,7 @@ long double pc_evaluate_math_expression(std::string expr)
 	std::vector<PCCalcToken> tokens;
 	tokens = pc_parse_string(expr, false);
 
-	PCCalcToken last = pc_iterate_tokens(tokens);
+	PCCalcToken last = pc_iterate_tokens(tokens, tmode);
 
 	if(last.type != number)
 		throw lasttokenerror;
@@ -642,9 +869,9 @@ long double pc_evaluate_math_expression(std::string expr)
 
 }
 
-long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr)
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, PCTrigMode tmode)
 {
-	PCCalcToken last = pc_iterate_tokens(expr);
+	PCCalcToken last = pc_iterate_tokens(expr, tmode);
 
 	if(last.type != number)
 		throw lasttokenerror;
@@ -706,7 +933,7 @@ std::vector<PCCalcToken> pc_variable_substitute(std::vector<PCCalcToken> tok, st
 		return tokens;
 }
 
-long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable> vars)
+long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable> vars, PCTrigMode tmode)
 {
 	
 
@@ -720,7 +947,7 @@ long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable
 	
 
 
-	PCCalcToken last = pc_iterate_tokens(tokens);
+	PCCalcToken last = pc_iterate_tokens(tokens, tmode);
 
 	if(last.type != number)
 		throw lasttokenerror;
@@ -732,7 +959,7 @@ long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable
 
 }
 
-long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vector<PCVariable> vars)
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vector<PCVariable> vars, PCTrigMode tmode)
 {
 	
 
@@ -745,7 +972,7 @@ long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vect
 	
 
 
-	PCCalcToken last = pc_iterate_tokens(tokens);
+	PCCalcToken last = pc_iterate_tokens(tokens, tmode);
 
 	if(last.type != number)
 		throw lasttokenerror;
@@ -794,6 +1021,18 @@ std::string pc_tokens_to_string(std::vector<PCCalcToken> tokens)
 				result += "%";
 			else if(tokens[i].value == factorial)
 				result += "!";
+			else if(tokens[i].value == sine)
+				result += "sin ";
+			else if(tokens[i].value == cosine)
+				result += "cos ";
+			else if(tokens[i].value == tangent)
+				result += "tan ";
+			else if(tokens[i].value == arcsine)
+				result += "asin ";
+			else if(tokens[i].value == arccosine)
+				result += "acos ";
+			else if(tokens[i].value == arctangent)
+				result += "atan ";
 			else
 				throw syntaxerror;
 		}

@@ -26,8 +26,10 @@
 #define PC_PI  3.141592653589793238462643383279502884
 
 enum PCTokenType{operand,number,variable};
-enum PCOperand{invalid,plus,minus,mul,divide,exponent,squareroot,root,absolutevalue,rightper,leftper,logarithm, naturallogarithm, baselogarithm,modulo,factorial,npr,ncr};
+enum PCOperand{invalid,plus,minus,mul,divide,exponent,squareroot,root,absolutevalue,rightper,leftper,logarithm, naturallogarithm, baselogarithm,modulo,factorial,npr,ncr,sine,cosine,tangent,arcsine,arccosine,arctangent};
 enum PCException{syntaxerror,lasttokenerror,domainerror,operationerror,variableerror};
+enum PCTrigFunction{tfsine, tfcosine, tftangent, tfarcsine, tfarccosine, tfarctangent};
+enum PCTrigMode{deg, rad, grad, turn};
 
 typedef struct PCCalcToken
 {
@@ -46,10 +48,12 @@ bool pc_is_value_numeric(std::string tocheck);
 bool pc_is_value_numeric(PCCalcToken tocheck);
 bool pc_i_is_in_blacklist(std::vector<int>& blacklist, int i);
 
+double pc_trig_eval(PCTrigFunction ftype, double value, PCTrigMode tmode);
+
 PCOperand pc_get_operand_from_string(std::string tocheck);
 
 
-PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens);
+PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens, PCTrigMode tmode = deg);
 
 std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter = " ", bool keepEmpty = false);
 
@@ -60,10 +64,10 @@ PCVariable pc_create_variable(std::vector<PCCalcToken> value, char name);
 std::vector<PCCalcToken> pc_variable_substitute(std::vector<PCCalcToken> tok, std::vector<PCVariable> vars);
 int pc_get_variable_by_name(std::vector<PCVariable> vars, char name);
 
-long double pc_evaluate_math_expression(std::string expr);
-long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr);
-long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable> vars);
-long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vector<PCVariable> vars);
+long double pc_evaluate_math_expression(std::string expr, PCTrigMode tmode = deg);
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, PCTrigMode tmode = deg);
+long double pc_evaluate_math_expression(std::string expr, std::vector<PCVariable> vars, PCTrigMode tmode = deg);
+long double pc_evaluate_math_expression(std::vector<PCCalcToken> expr, std::vector<PCVariable> vars, PCTrigMode tmode = deg);
 
 std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled=true);
 

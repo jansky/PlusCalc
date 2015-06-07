@@ -7,3 +7,6 @@ printr Zero 1:
 ((-1*b)+(sqrt(4*a*c)))/(2*a)
 printr Zero 2: 
 ((-1*b)-(sqrt(4*a*c)))/(2*a)
+set x (-1*b)/(2*a)
+printr Vertex:
+(a^x)+(b*x)+c

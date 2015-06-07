@@ -102,6 +102,11 @@ std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled)
 						tokens.push_back(pc_create_token(operand, squareroot));
 						i+=3;
 					}
+					else if(s.length() > i + 2 && s[i + 1] == 'i' && s[i + 2] == 'n')
+					{
+						tokens.push_back(pc_create_token(operand, sine));
+						i+=2;
+					}
 					else
 					{
 						if(varsenabled)
@@ -147,6 +152,21 @@ std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled)
 						tokens.push_back(pc_create_token(operand, absolutevalue));
 						i+=2;
 					}
+					else if(s.length() > i + 3 && s[i + 1] == 's' && s[i + 2] == 'i' && s[i + 3] == 'n')
+					{
+						tokens.push_back(pc_create_token(operand, arcsine));
+						i+=3;
+					}
+					else if(s.length() > i + 3 && s[i + 1] == 'c' && s[i + 2] == 'o' && s[i + 3] == 's')
+					{
+						tokens.push_back(pc_create_token(operand, arccosine));
+						i+=3;
+					}
+					else if(s.length() > i + 3 && s[i + 1] == 't' && s[i + 2] == 'a' && s[i + 3] == 'n')
+					{
+						tokens.push_back(pc_create_token(operand, arctangent));
+						i+=3;
+					}
 					else
 					{
 						if(varsenabled)
@@ -173,6 +193,52 @@ std::vector<PCCalcToken> pc_parse_string(std::string s,bool varsenabled)
 					else if(s.length() > i + 2 && s[i + 1] == 'C' && s[i + 2] == 'r')
 					{
 						tokens.push_back(pc_create_token(operand, ncr));
+						i+=2;
+					}
+					else
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
+					
+				}
+				else if(s[i] == 'c')
+				{
+					if(s.length() > i + 2 && s[i + 1] == 'o' && s[i + 2] == 's')
+					{
+						tokens.push_back(pc_create_token(operand, cosine));
+						i+=2;
+					}
+					else
+					{
+						if(varsenabled)
+						{
+							
+							//Variables are enabled, treat char as a variable
+							tokens.push_back(pc_create_token(variable, (double)s[i]));
+						}
+						else
+						{
+							//No variables, unrecognized character
+							throw syntaxerror;
+						}
+					}
+					
+				}
+				else if(s[i] == 't')
+				{
+					if(s.length() > i + 2 && s[i + 1] == 'a' && s[i + 2] == 'n')
+					{
+						tokens.push_back(pc_create_token(operand, tangent));
 						i+=2;
 					}
 					else
