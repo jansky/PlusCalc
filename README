@@ -153,6 +153,19 @@ Trigonometry mode: gradians
 > tan 50
 1.000000000000000222
 
+The PlusCalc interpreter also contains extra functionality to perform synthetic division and to test if a number is prime.
+
+> synthdiv 1;1,2,3,4,5
+1	3	5	7	9	
+> set a 3
+> synthdiv 1;1,2,a,4,5
+1	3	5	7	9	
+> ans
+9
+> isprime ans
+Not prime
+> 
+
 The PlusCalc interpreter also includes the variable support of the PlusCalc library, as well as functions (not a part of the library).
 
 Variables can be any character that is not a defined operation or constant (e.g. e, +, *).

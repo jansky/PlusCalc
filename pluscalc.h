@@ -55,7 +55,9 @@ PCOperand pc_get_operand_from_string(std::string tocheck);
 
 PCCalcToken pc_iterate_tokens(std::vector<PCCalcToken>& tokens, PCTrigMode tmode = deg);
 
-std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter = " ", bool keepEmpty = false);
+std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter = " ", bool keepEmpty = false, bool keepEscape = false);
+
+std::string PCStringEscapeRemove(const std::string source);
 
 PCCalcToken pc_create_token(PCTokenType type, long double value);
 

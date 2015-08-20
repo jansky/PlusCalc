@@ -195,7 +195,7 @@ double pc_trig_eval(PCTrigFunction ftype, double value, PCTrigMode tmode)
 	
 }
 
-std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter, bool keepEmpty)
+/*std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter, bool keepEmpty)
 {
     std::vector<std::string> results;
 
@@ -217,6 +217,60 @@ std::vector<std::string> PCStringSplit(const std::string &source, const char *de
     }
 
     return results;
+}
+*/
+
+std::vector<std::string> PCStringSplit(const std::string &source, const char *delimiter, bool keepEmpty, bool keepEscape)
+{
+	std::vector<std::string> result;
+	std::string buf;
+	const char splitter = delimiter[0];
+
+	
+	
+	for(int i = 0; i < source.length(); i++)
+	{
+		
+		if(source[i] == '\\')
+		{
+			
+
+			if(i+1 >= source.length())
+				throw syntaxerror;
+
+			if(keepEscape)
+				buf += '\\';
+
+			buf += source[i+1];
+
+		
+
+			i++;
+
+			
+
+		}
+		else if(source[i] == splitter)
+		{
+		    
+	
+			if(buf.length() > 0 || keepEmpty)
+				result.push_back(buf);
+
+			buf = "";
+
+		}
+		else
+		{
+			buf += source[i];
+			
+		}
+	}
+
+	if(buf != "")
+		result.push_back(buf);
+
+	return result;
 }
 
 long double pc_factorial(long long n)
@@ -1054,3 +1108,23 @@ std::string pc_tokens_to_string(std::vector<PCCalcToken> tokens)
 	return result;
 }
 
+std::string PCStringEscapeRemove(const std::string source)
+{
+	std::vector<int> positions;
+	std::string new_str = source;
+
+	for(int i = 0; i < source.length(); i++)
+	{
+		if(source[i] == '\\')
+			positions.push_back(i);
+	}
+
+	for(int i = 0; i < positions.size(); i++)
+	{
+		new_str.erase(new_str.begin()+positions[i]);
+	}
+
+	return new_str;
+}
+
+	
